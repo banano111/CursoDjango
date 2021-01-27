@@ -1,0 +1,8 @@
+{
+    "python.pythonPath": "/Users/aapedraza/Documents/Develop/AzulSchool/Django/Proyecto1/.env/bin/python",
+    "files.associations": {
+        "**/*.html": "html",
+        "**/templates/**/*.html": "django-html",
+    },
+    "emmet.includeLanguages": {"django-html": "html"},
+}
