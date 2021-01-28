@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django import views
 from .models import UserModel
+from django.contrib import messages
 
 class GetUsersView (views.View):
     def get(self, request):
@@ -48,8 +49,10 @@ class CreateUserView(views.View):
         )
 
         if new_user:
+            messages.success(request, 'Usuario Creado Exitosamente!')
             return redirect('/main')
         else:
+            messages.error(request, 'Algo Fallo al momento de crear un usuario')
             return render(request, self.template_name)
 
 class UpdateUserView(views.View):
@@ -71,10 +74,11 @@ class UpdateUserView(views.View):
         user.gender = request.POST['gender']
         user.date_birth = request.POST['date_birth']
         user.save()
+        messages.success(request, 'Usuario Actualizado Exitosamente!')
         return redirect('/main/' + str(id))
 
 def DeleteUserView(request, id):
     user = UserModel.objects.get(id=id)
     user.delete()
-
+    messages.success(request, 'Usuario Eliminado Exitosamente!')
     return redirect('/main/')

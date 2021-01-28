@@ -14,5 +14,11 @@
     {% block content %}
     {% endblock content %}
 
+    {% if messages %}
+        {% for message in messages  %}
+            <p>{{message}}</p>
+        {% endfor %}
+    {% endif %}
+
 </body>
 </html>
