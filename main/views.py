@@ -66,6 +66,7 @@ class CreateUserView(views.View):
         if new_form.is_valid():
             form_data = new_form.save(commit=False)
             form_data.save()
+            messages.success(request, 'Usuario Creado Exitosamente!')
             return redirect('/main')
         else:
             errors = new_form.errors.as_data()
@@ -75,6 +76,7 @@ class CreateUserView(views.View):
                 'form': form,
                 'action': self.action
             }
+            messages.error(request, 'Algo Fallo al momento de crear un usuario')
             return render(request, self.template_name, context)
 
 
@@ -105,6 +107,7 @@ class UpdateUserView(views.View):
         edit_form =UserForm(request.POST, instance=user)
         if edit_form.is_valid():
             edit_form.save()
+            messages.success(request, 'Usuario Actualizado Exitosamente!')
             return redirect('/main/' +  str(id))
         else:
             errors = edit_form.errors.as_data()
@@ -115,6 +118,7 @@ class UpdateUserView(views.View):
                 'action': self.action,
                 'user': user
             }
+            messages.error(request, 'Algo Fallo al editar la información del usuario')
             return render(request, self.template_name, context)
 
 

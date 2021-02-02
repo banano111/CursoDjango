@@ -16,7 +16,11 @@
 
     {% if messages %}
         {% for message in messages  %}
-            <p>{{message}}</p>
+            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                <p><b>ERROR: </b>{{message}}</p>
+            {% else %}
+                <p>{{message}}</p>
+            {% endif %}
         {% endfor %}
     {% endif %}
 
