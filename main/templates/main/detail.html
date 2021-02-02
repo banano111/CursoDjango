@@ -10,6 +10,6 @@
     {% else %}
         <p>Fecha de Nacimiento No Especificada</p>
     {% endif %}
-    <a href="/main/update/{{user.id}}/"><button>Editar Usuario</button></a>
-    <a href="/main/delete/{{user.id}}/"><button>Eliminar Usuario</button></a>
+    <a href="{% url 'user:update' user.id %}"><button>Editar Usuario</button></a>
+    <a href="{% url 'user:delete' user.id %}"><button>Eliminar Usuario</button></a>
 {% endblock content %}

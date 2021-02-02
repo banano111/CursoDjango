@@ -36,38 +36,12 @@ class CreateUserView(views.View):
         return render(request, self.template_name, context)
 
     def post(self, request):
-        """ first_name = request.POST['first_name']
-        last_name = request.POST['last_name']
-        email = request.POST['email']
-        phone_number = request.POST['phone_number']
-        gender= request.POST['gender']
-        date_birth = request.POST['date_birth']
-
-        if not date_birth:
-            date_birth = None
-        
-        new_user = UserModel.objects.create(
-            first_name = first_name,
-            last_name = last_name,
-            email = email,
-            phone_number = phone_number,
-            gender = gender,
-            date_birth = date_birth
-        )
-
-        if new_user:
-            messages.success(request, 'Usuario Creado Exitosamente!')
-            return redirect('/main')
-        else:
-            messages.error(request, 'Algo Fallo al momento de crear un usuario')
-            return render(request, self.template_name) """
-
         new_form = UserForm(request.POST)
         if new_form.is_valid():
             form_data = new_form.save(commit=False)
             form_data.save()
             messages.success(request, 'Usuario Creado Exitosamente!')
-            return redirect('/main')
+            return redirect('user:list')
         else:
             errors = new_form.errors.as_data()
             print(errors)
@@ -95,20 +69,12 @@ class UpdateUserView(views.View):
 
     def post(self, request, id):
         user = UserModel.objects.get(id=id)
-        # user.first_name = request.POST['first_name']
-        # user.last_name = request.POST['last_name']
-        # user.email = request.POST['email']
-        # user.phone_number = request.POST['phone_number']
-        # user.gender = request.POST['gender']
-        # user.date_birth = request.POST['date_birth']
-        # user.save()
-        # messages.success(request, 'Usuario Actualizado Exitosamente!')
-        # return redirect('/main/' + str(id))
+
         edit_form =UserForm(request.POST, instance=user)
         if edit_form.is_valid():
             edit_form.save()
             messages.success(request, 'Usuario Actualizado Exitosamente!')
-            return redirect('/main/' +  str(id))
+            return redirect('user:detail', id)
         else:
             errors = edit_form.errors.as_data()
             print(errors)
@@ -127,4 +93,4 @@ def DeleteUserView(request, id):
     user = UserModel.objects.get(id=id)
     user.delete()
     messages.success(request, 'Usuario Eliminado Exitosamente!')
-    return redirect('/main/')
+    return redirect('user:list')
