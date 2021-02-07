@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 GENDER_OPTS = (
     ('male', 'Masculino'),
@@ -17,8 +18,16 @@ class UserModel(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
+    @property
+    def full_name(self):
         return f'{self.first_name} {self.last_name}'
+
+    def __str__(self):
+        return self.full_name
+
+    def get_absolute_url(self):
+        return reverse("user:detail", args=[self.id])
+    
 
 class Profile(models.Model):
     
@@ -28,6 +37,10 @@ class Profile(models.Model):
     is_public = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-
+    
     def __str__(self):
-        return f'{self.user.first_name} {self.user.last_name}'
+        return self.user.full_name
+
+    @property
+    def get_image_url(self):
+        return self.profile_image.url

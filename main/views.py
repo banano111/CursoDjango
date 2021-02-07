@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django import views
 from .models import UserModel
-from .forms import UserForm
+from .forms import UserForm, ProfileForm
 from django.contrib import messages
 
 class GetUsersView (views.View):
@@ -28,26 +28,32 @@ class CreateUserView(views.View):
     template_name = 'main/form.html'
     action = 'create'
     def get(self, request):
-        form = UserForm()
+        user_form = UserForm()
+        profile_form = ProfileForm()
         context = {
-            'form': form,
+            'user_form': user_form,
+            'profile_form': profile_form,
             'action': self.action
         }
         return render(request, self.template_name, context)
 
     def post(self, request):
-        new_form = UserForm(request.POST)
-        if new_form.is_valid():
-            form_data = new_form.save(commit=False)
-            form_data.save()
+        new_user_form = UserForm(request.POST)
+        new_profile_form = ProfileForm(request.POST, request.FILES)
+        if new_user_form.is_valid() & new_profile_form.is_valid():
+            user_form_data = new_user_form.save()
+            profile_form_data = new_profile_form.save(commit=False)
+            profile_form_data.user = user_form_data
+            profile_form_data.save()
             messages.success(request, 'Usuario Creado Exitosamente!')
             return redirect('user:list')
         else:
-            errors = new_form.errors.as_data()
+            errors = new_user_form.errors.as_data()
             print(errors)
             form = UserForm()
             context = {
-                'form': form,
+                'user_form': new_user_form,
+                'profile_form': new_profile_form,
                 'action': self.action
             }
             messages.error(request, 'Algo Fallo al momento de crear un usuario')
@@ -59,30 +65,35 @@ class UpdateUserView(views.View):
     action = 'update'
     def get(self, request, id):
         user = UserModel.objects.get(id=id)
-        form = UserForm(instance=user)
+        user_form = UserForm(instance=user)
+        profile_form = ProfileForm(instance=user.profile)
         context = {
             'user': user,
-            'action': self.action,
-            'form': form
+            'user_form': user_form,
+            'profile_form': profile_form,
+            'action': self.action
         }
         return render(request, self.template_name, context)
 
     def post(self, request, id):
         user = UserModel.objects.get(id=id)
-
-        edit_form =UserForm(request.POST, instance=user)
-        if edit_form.is_valid():
-            edit_form.save()
+        edit_user_form = UserForm(request.POST, instance=user)
+        edit_profile_form = ProfileForm(request.POST, request.FILES, instance=user.profile) 
+        if edit_user_form.is_valid() & edit_profile_form.is_valid():
+            edit_user_data = edit_user_form.save()
+            edit_profile_data = edit_profile_form.save()
             messages.success(request, 'Usuario Actualizado Exitosamente!')
             return redirect('user:detail', id)
         else:
             errors = edit_form.errors.as_data()
-            print(errors)
-            form = UserForm(instance=user)
+            user = UserModel.objects.get(id=id)
+            user_form = UserForm(instance=user)
+            profile_form = ProfileForm(instance=user.profile)
             context = {
-                'form': form,
-                'action': self.action,
-                'user': user
+                'user': user,
+                'user_form': user_form,
+                'profile_form': profile_form,
+                'action': self.action
             }
             messages.error(request, 'Algo Fallo al editar la información del usuario')
             return render(request, self.template_name, context)
