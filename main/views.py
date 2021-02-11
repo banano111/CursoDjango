@@ -16,6 +16,7 @@ class GetUsersView (views.View):
 
 def GetUserView(request, id):
     user = UserModel.objects.get(pk=id)
+    print(user.addresses.all())
     # Es algo parecido a SELECT * FROM USERS WHERE pk = id
     template_name = 'main/detail.html'
     context = {
