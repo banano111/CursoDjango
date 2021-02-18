@@ -42,6 +42,24 @@
     {% else %}
         <p>Aun no tienes dirrecciones de envio registradas 😭</p>
     {% endif %}
+
+    <h3>Grupos a los que pertenece</h3>
+
+    {% if user.groups.all|length > 0 %}
+        {% for group in user.groups.all %}
+            <ul>
+                <a href="{{ group.get_absolute_url }}"><li>{{ group.name }}</li></a>
+                <form action="{% url 'user:remove_group' user.id%}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="group_id" value="{{group.id}}">
+                    <input type="submit" value="Salir del Grupo">
+                </form>
+            </ul>
+        {% endfor %}
+    {% else %}
+        <h5>Este usuario no pertenece a ningun grupo</h5>
+    {% endif %}
+
     <a href="{% url 'user:update' user.id %}"><button>Editar Usuario</button></a>
     <a href="{% url 'user:delete' user.id %}"><button>Eliminar Usuario</button></a>
 {% endblock content %}
